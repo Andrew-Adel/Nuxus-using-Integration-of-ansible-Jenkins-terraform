@@ -5,7 +5,7 @@ pipeline {
             agent {
                 docker {
                     image 'andrewadel/images_for_nexus:latest'
-                    label 'images_for_nexus'
+                    // label 'images_for_nexus'
                 }
             }
             steps {

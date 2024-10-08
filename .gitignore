@@ -5,4 +5,5 @@ Terraform/.terraform.lock.hcl
 Terraform/terraform.tfstate.backup
 Terraform/aws-config
 
+Ansible/inventory
 
