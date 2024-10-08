@@ -4,7 +4,7 @@ pipeline {
         stage('Build Terraform Image') {
             agent {
                 docker {
-                    image 'andrewadel/images_for_nexus:latest'
+                    image 'images_for_nexus:latest'
                     // label 'images_for_nexus'
                 }
             }
