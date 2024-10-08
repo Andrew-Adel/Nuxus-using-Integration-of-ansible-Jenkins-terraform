@@ -5,7 +5,7 @@ pipeline {
             agent {
                 docker {
                     image 'andrewadel/images_for_nexus:latest'
-                    label 'terraform-agent'
+                    label 'images_for_nexus'
                 }
             }
             steps {
