@@ -19,7 +19,7 @@ pipeline {
         stage('Create Inventory File') {
             agent {
                 docker {
-                    image 'andrewadel/images_for_nexus:latest'
+                    image 'images_for_nexus:latest'
                 }
             }
             steps {
@@ -31,7 +31,7 @@ pipeline {
         stage('Install Nexus using Ansible') {
             agent {
                 docker {
-                    image 'andrewadel/ansible-agent:latest'
+                    image 'ansible-agent:latest'
                 }
             }
             steps {
