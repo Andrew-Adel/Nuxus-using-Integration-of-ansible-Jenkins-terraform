@@ -4,8 +4,8 @@ pipeline {
         stage('Build Terraform Image') {
             agent {
                 docker {
-                    image 'images_for_nexus:latest'
-                    // label 'images_for_nexus'
+                    image 'andrewadel/images_for_nexus:latest'
+                    label 'terraform-agent'
                 }
             }
             steps {
@@ -19,7 +19,7 @@ pipeline {
         stage('Create Inventory File') {
             agent {
                 docker {
-                    image 'images_for_nexus:latest'
+                    image 'andrewadel/images_for_nexus:latest'
                 }
             }
             steps {
@@ -31,7 +31,7 @@ pipeline {
         stage('Install Nexus using Ansible') {
             agent {
                 docker {
-                    image 'ansible-agent:latest'
+                    image 'andrewadel/ansible-agent:latest'
                 }
             }
             steps {
