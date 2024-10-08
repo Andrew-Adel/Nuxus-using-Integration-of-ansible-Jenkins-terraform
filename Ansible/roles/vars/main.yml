@@ -1,0 +1,4 @@
+nexus_dir: /opt/nexus
+nexus_file_path: /home/ec2-user/nexus-3.72.0-04-unix.tar.gz
+nexus_url: https://download.sonatype.com/nexus/3/nexus-3.72.0-04-unix.tar.gz
+systemd_service_dir: /etc/systemd/system

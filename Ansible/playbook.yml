@@ -1,0 +1,9 @@
+---
+- name: Configure Nexus Repository Manager
+  hosts: nexus
+  become: yes
+  roles:
+    - roles
+
+
+

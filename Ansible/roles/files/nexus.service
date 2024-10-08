@@ -1,0 +1,12 @@
+[Unit]
+Description=Nexus Repository Manager
+After=network.target
+
+[Service]
+Type=simple
+User=nexus
+ExecStart=/opt/nexus/nexus-3.72.0-04/bin/nexus run
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
