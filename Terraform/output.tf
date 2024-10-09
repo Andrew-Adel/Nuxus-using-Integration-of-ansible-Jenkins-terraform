@@ -25,10 +25,10 @@ output "inventory_file" {
   value       = module.My_EC2_Instance.inventory_file
 }
 
-resource "local_file" "inventory_file" {
-  content  = module.My_EC2_Instance.inventory_file
-  filename = "../Ansible/inventory"
-}
+# resource "local_file" "inventory_file" {
+#   content  = module.My_EC2_Instance.inventory_file
+#   filename = "../Ansible/inventory"
+# }
 
 resource "local_file" "inventory_file" {
   content  = <<EOF
