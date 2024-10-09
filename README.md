@@ -8,10 +8,8 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Pipeline Visualization](#pipeline-visualization)
-- [Success Metrics](#success-metrics)
 - [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
+
 
 ## Project Overview
 
