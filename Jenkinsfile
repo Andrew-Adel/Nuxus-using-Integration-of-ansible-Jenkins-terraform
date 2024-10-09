@@ -156,7 +156,7 @@ pipeline {
                         echo "SSH User: ${SSH_USER}"
 
                         // Run your Ansible playbook
-                        sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_KEY}"
+                        sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
                     }
                 }
             }
