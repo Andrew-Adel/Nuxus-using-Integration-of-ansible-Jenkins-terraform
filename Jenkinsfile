@@ -164,6 +164,11 @@ pipeline {
                             eval $(ssh-agent -s)
                             chmod 600 "$SSH_PRIVATE_KEY_FILE"
                             ssh-add "$SSH_PRIVATE_KEY_FILE"
+
+                            // Create a temporary directory for Ansible
+                            export ANSIBLE_LOCAL_TEMP=${WORKSPACE}/.ansible/tmp
+                            mkdir -p "$ANSIBLE_LOCAL_TEMP"
+
                             ansible-playbook -i inventory_file playbook.yml --private-key="$SSH_PRIVATE_KEY_FILE"
                             '''
                         }
