@@ -11,9 +11,20 @@ pipeline {
                 script {
                     // Set the working directory to the Terraform directory
                     dir('Terraform') {
-                        // Run Terraform commands
-                        sh 'terraform init'
-                        sh 'terraform apply -auto-approve'
+                        // Copy AWS config and credentials files
+                        withCredentials([file(credentialsId: 'aws-config-file', variable: 'AWS_CONFIG_FILE'),
+                                        file(credentialsId: 'aws-credentials-file', variable: 'AWS_CREDENTIALS_FILE')]) {
+                            // Create the aws-config directory if it doesn't exist
+                            sh 'mkdir -p aws-config'
+
+                            // Copy the AWS config and credentials to the aws-config directory
+                            sh "cp $AWS_CONFIG_FILE aws-config/config"
+                            sh "cp $AWS_CREDENTIALS_FILE aws-config/credentials"
+
+                            // Run Terraform commands
+                            sh 'terraform init'
+                            sh 'terraform apply -auto-approve'
+                        }
                     }
                 }
             }
