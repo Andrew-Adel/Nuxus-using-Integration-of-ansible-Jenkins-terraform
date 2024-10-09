@@ -62,16 +62,16 @@ ansible-playbook playbook.yml
 
 ## Pipeline Visualization
 
-![image](https://github.com/user-attachments/assets/80d80683-4ef7-4a9b-bb55-3c31b98cb2b9)
+![Screenshot from 2024-10-09 20-55-31](https://github.com/user-attachments/assets/929b2a71-e0ac-40b4-b6e8-52bd5a49ad22)
 
 
 ## Screenshots
 
 ### Nexus User Interface
 
-![Screenshot from 2024-10-09 20-35-35](https://github.com/user-attachments/assets/6a6e9cd7-ced2-4d8c-8b42-5d72985682b8)
+![Screenshot from 2024-10-09 20-35-35](https://github.com/user-attachments/assets/7e731a23-4cfe-4fcd-9cd1-5c52bbe5aa91)
 
 
 ### Terminal Outputs
 
-![Screenshot from 2024-10-09 20-35-39](https://github.com/user-attachments/assets/0791957e-71ec-46e3-8a47-56e325139a2a)
+![Screenshot from 2024-10-09 20-35-39](https://github.com/user-attachments/assets/1d9da25e-001e-44a8-87e2-532d5aacdac5)
