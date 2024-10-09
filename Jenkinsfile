@@ -181,7 +181,7 @@ pipeline {
                             # ansible-playbook -i inventory playbook.yml --private-key="${SSH_PRIVATE_KEY_FILE}"
                             '''
                             sshagent(['my-ssh-key']) { // Replace with your credential ID
-                                sh 'ansible-playbook -i inventory playbook.yml"'
+                                sh 'ansible-playbook -i inventory playbook.yml'
                             }
                         }
                         
