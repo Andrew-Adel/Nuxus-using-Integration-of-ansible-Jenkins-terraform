@@ -160,7 +160,6 @@ pipeline {
                         // sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
                         dir('Ansible') {
                             sh '''
-                            // echo "$SSH_PRIVATE_KEY"
                             ls
                             
                             ansible-playbook -i inventory_file playbook.yml --private-key="$SSH_PRIVATE_KEY_FILE"
