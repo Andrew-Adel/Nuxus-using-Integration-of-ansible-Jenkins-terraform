@@ -67,44 +67,66 @@ pipeline {
                     image 'terraformtest' // Your Terraform image
                 }
             }
+            // steps {
+            //     // script {
+            //     //     // Set a temporary directory for AWS config files
+            //     //     def tempDir = "${env.WORKSPACE}/Terraform/aws-config"
+            //     //     sh "mkdir -p ${tempDir} && chmod 777 ${tempDir}" // Create and set permissions
+            //     //     // Use withCredentials to securely access AWS config and credentials files
+            //     //     withCredentials([
+            //     //         file(credentialsId: 'aws-config-file', variable: 'AWS_CONFIG_FILE'),
+            //     //         file(credentialsId: 'aws-credentials-file', variable: 'AWS_CREDENTIALS_FILE')
+            //     //     ]) {
+            //     //         // Copy the AWS config and credentials to the temporary directory
+            //     //         sh "cp \"$AWS_CONFIG_FILE\" ${tempDir}/config"
+            //     //         sh "cp \"$AWS_CREDENTIALS_FILE\" ${tempDir}/credentials"
+
+            //     //         // Set environment variables for Terraform to read the AWS config
+            //     //         sh "export AWS_CONFIG_FILE=${tempDir}/config"
+            //     //         sh "export AWS_SHARED_CREDENTIALS_FILE=${tempDir}/credentials"
+
+            //     //         // Run Terraform commands
+            //     //         dir('Terraform') {
+            //     //             sh 'terraform init'
+            //     //             sh 'terraform plan'
+            //     //             sh 'terraform apply -auto-approve'
+            //     //             // sh 'sleep 30'
+            //     //             // sh 'terraform destroy -auto-approve'
+            //     //         }
+            //     //     }
+            //     // }
+            //     script {
+            //         // Use withCredentials to securely access AWS credentials
+            //         withCredentials([
+            //             string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+            //             string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+            //         ]) {
+            //             // Set environment variables for Terraform to read the AWS config
+            //             // Terraform will automatically use these environment variables
+            //             env.AWS_ACCESS_KEY_ID = "${AWS_ACCESS_KEY_ID}"
+            //             env.AWS_SECRET_ACCESS_KEY = "${AWS_SECRET_ACCESS_KEY}"
+
+            //             // Run Terraform commands
+            //             dir('Terraform') {
+            //                 sh 'terraform init'
+            //                 sh 'terraform plan'
+            //                 sh 'terraform apply -auto-approve'
+            //             }
+            //         }
+            //     }
+            // }
             steps {
-                // script {
-                //     // Set a temporary directory for AWS config files
-                //     def tempDir = "${env.WORKSPACE}/Terraform/aws-config"
-                //     sh "mkdir -p ${tempDir} && chmod 777 ${tempDir}" // Create and set permissions
-                //     // Use withCredentials to securely access AWS config and credentials files
-                //     withCredentials([
-                //         file(credentialsId: 'aws-config-file', variable: 'AWS_CONFIG_FILE'),
-                //         file(credentialsId: 'aws-credentials-file', variable: 'AWS_CREDENTIALS_FILE')
-                //     ]) {
-                //         // Copy the AWS config and credentials to the temporary directory
-                //         sh "cp \"$AWS_CONFIG_FILE\" ${tempDir}/config"
-                //         sh "cp \"$AWS_CREDENTIALS_FILE\" ${tempDir}/credentials"
-
-                //         // Set environment variables for Terraform to read the AWS config
-                //         sh "export AWS_CONFIG_FILE=${tempDir}/config"
-                //         sh "export AWS_SHARED_CREDENTIALS_FILE=${tempDir}/credentials"
-
-                //         // Run Terraform commands
-                //         dir('Terraform') {
-                //             sh 'terraform init'
-                //             sh 'terraform plan'
-                //             sh 'terraform apply -auto-approve'
-                //             // sh 'sleep 30'
-                //             // sh 'terraform destroy -auto-approve'
-                //         }
-                //     }
-                // }
                 script {
-                    // Use withCredentials to securely access AWS credentials
+                    // Use withCredentials to access AWS credentials
                     withCredentials([
                         string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
-                        string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                        string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY'),
+                        string(credentialsId: 'aws-region', variable: 'AWS_REGION') // Optional
                     ]) {
-                        // Set environment variables for Terraform to read the AWS config
-                        // Terraform will automatically use these environment variables
-                        env.AWS_ACCESS_KEY_ID = "${AWS_ACCESS_KEY_ID}"
-                        env.AWS_SECRET_ACCESS_KEY = "${AWS_SECRET_ACCESS_KEY}"
+                        // Set environment variables for Terraform
+                        sh 'echo "AWS Access Key: $AWS_ACCESS_KEY_ID"'
+                        sh 'echo "AWS Secret Access Key: $AWS_SECRET_ACCESS_KEY"'
+                        sh 'echo "AWS Region: $AWS_REGION"'
 
                         // Run Terraform commands
                         dir('Terraform') {
