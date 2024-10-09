@@ -146,16 +146,17 @@ pipeline {
             }
             steps {
                 script {
-                    // Use withCredentials to load SSH key without keyVariable
-                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key')]) {
-                        // Start the SSH agent
-                        echo 'enter ansible'
+                    // Use withCredentials to securely access SSH private key
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
+                        // Ensure the SSH agent is started
                         sh 'eval $(ssh-agent -s)'
-                        // Add the private key to the SSH agent automatically handled
-                        sh 'ssh-add ~/.ssh/id_rsa' // Default location where the key is stored
-                        
+                        sh "echo \"${SSH_KEY}\" | tr -d '\\r' | ssh-add -"
+
+                        // Debugging: Check SSH_USER
+                        echo "SSH User: ${SSH_USER}"
+
                         // Run your Ansible playbook
-                        sh 'ansible-playbook -i inventory_file playbook.yml'
+                        sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_KEY}"
                     }
                 }
             }
