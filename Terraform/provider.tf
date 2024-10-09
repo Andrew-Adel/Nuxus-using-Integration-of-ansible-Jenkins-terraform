@@ -10,8 +10,8 @@ terraform {
 }
 
 provider "aws" {
-  # shared_config_files      = ["./aws-config/config"]
-  # shared_credentials_files = ["./aws-config/credentials"]
-  # profile                  = "Terraform-first-profile"
+  shared_config_files      = ["./aws-config/config"]
+  shared_credentials_files = ["./aws-config/credentials"]
+  profile                  = "Terraform-first-profile"
 
 }
