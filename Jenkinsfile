@@ -160,15 +160,23 @@ pipeline {
                         // sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
                         dir('Ansible') {
                             sh '''
+                            # List the files for debugging
                             ls
+
+                            # Start the SSH agent
                             eval $(ssh-agent -s)
+
+                            # Set permissions on the SSH key file
                             chmod 600 "$SSH_PRIVATE_KEY_FILE"
+
+                            # Add the private key to the SSH agent
                             ssh-add "$SSH_PRIVATE_KEY_FILE"
 
-                            // Create a temporary directory for Ansible
+                            # Create a temporary directory for Ansible if it doesn't exist
                             export ANSIBLE_LOCAL_TEMP=${WORKSPACE}/.ansible/tmp
                             mkdir -p "$ANSIBLE_LOCAL_TEMP"
 
+                            # Run the Ansible playbook
                             ansible-playbook -i inventory_file playbook.yml --private-key="$SSH_PRIVATE_KEY_FILE"
                             '''
                         }
