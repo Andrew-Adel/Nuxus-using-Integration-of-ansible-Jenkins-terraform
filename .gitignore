@@ -6,4 +6,4 @@ Terraform/terraform.tfstate.backup
 Terraform/aws-config
 
 Ansible/inventory
-
+Terraform/terraform.tfstate
