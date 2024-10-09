@@ -101,9 +101,9 @@ pipeline {
             }
             steps {
                 script {
+                    unstash 'terraform-inventory'
                     withCredentials([file(credentialsId: 'Private-key-file', variable: 'SSH_PRIVATE_KEY_FILE')]) {
                        dir('Ansible') {
-                            unstash 'terraform-inventory'
                             sh '''
                             # List the files for debugging
                             ls
@@ -122,8 +122,7 @@ pipeline {
  #                           mkdir -p "$ANSIBLE_LOCAL_TEMP"
 
                             # Run the Ansible playbook
-                            ansible-playbook -i terraform-inventory playbook.yml --ssh-extra-args '-o StrictHostKeyChecking=no'
-                            '''
+                            ansible-playbook -i inventory playbook.yml --ssh-extra-args '-o StrictHostKeyChecking=no'                            '''
                             // sshagent(['my-ssh-key']) { // Replace with your credential ID
                             //     sh 'ansible-playbook -i inventory playbook.yml'
                             // }
