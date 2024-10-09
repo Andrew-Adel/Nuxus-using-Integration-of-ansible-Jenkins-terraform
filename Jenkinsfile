@@ -178,7 +178,7 @@ pipeline {
                             mkdir -p "$ANSIBLE_LOCAL_TEMP"
 
                             # Run the Ansible playbook
-                            ansible-playbook -i inventory playbook.yml --private-key="$SSH_PRIVATE_KEY_FILE"
+                            ansible-playbook -i inventory playbook.yml "
                             '''
                         }
                         
