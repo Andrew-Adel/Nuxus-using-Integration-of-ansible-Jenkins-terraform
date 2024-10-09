@@ -25,15 +25,15 @@ output "inventory_file" {
   value       = module.My_EC2_Instance.inventory_file
 }
 
-# resource "local_file" "inventory_file" {
-#   content  = module.My_EC2_Instance.inventory_file
-#   filename = "../Ansible/inventory"
-# }
-
 resource "local_file" "inventory_file" {
-  content  = <<EOF
-[nexus]
-${aws_instance.web.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=../${var.key_name}.pem
-EOF
+  content  = module.My_EC2_Instance.inventory_file
   filename = "../Ansible/inventory"
 }
+
+# resource "local_file" "inventory_file" {
+#   content  = <<EOF
+# [nexus]
+# ${aws_instance.web.public_ip} ansible_user=ec2-user ansible_ssh_private_key_file=../${var.key_name}.pem
+# EOF
+#   filename = "../Ansible/inventory"
+# }
