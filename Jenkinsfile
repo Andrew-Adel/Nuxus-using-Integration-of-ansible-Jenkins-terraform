@@ -70,9 +70,8 @@ pipeline {
             steps {
                 script {
                     // Set a temporary directory for AWS config files
-                    def tempDir = '/var/jenkins_home/workspace/my-pipeline-v2/Terraform/aws-config'
-                    sh "mkdir -p ${tempDir}"
-
+                    def tempDir = "${env.WORKSPACE}/Terraform/aws-config"
+                    sh "mkdir -p ${tempDir} && chmod 777 ${tempDir}" // Create and set permissions
                     // Use withCredentials to securely access AWS config and credentials files
                     withCredentials([
                         file(credentialsId: 'aws-config-file', variable: 'AWS_CONFIG_FILE'),
