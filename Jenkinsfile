@@ -4,14 +4,17 @@ pipeline {
         stage('Build Terraform Image') {
             agent {
                 docker {
-                    image 'andrewadel/images_for_nexus:latest'
+                    image 'terraformtest'
                 }
             }
             steps {
                 script {
-                    // Build Terraform project
-                    sh 'terraform init'
-                    sh 'terraform apply -auto-approve'
+                    // Set the working directory to the Terraform directory
+                    dir('Terraform') {
+                        // Run Terraform commands
+                        sh 'terraform init'
+                        sh 'terraform apply -auto-approve'
+                    }
                 }
             }
         }
