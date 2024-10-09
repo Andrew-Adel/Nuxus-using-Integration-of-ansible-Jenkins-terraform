@@ -1,2 +1,2 @@
 [nexus]
-3.85.51.1 ansible_user=ec2-user 
+3.85.51.1 ansible_user=ec2-user
