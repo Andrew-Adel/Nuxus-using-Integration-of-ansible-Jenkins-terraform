@@ -142,6 +142,7 @@ pipeline {
             agent {
                 docker {
                     image 'ansibletest'
+                    args '-u root' // Run the container as root (or specify a user with permissions)
                 }
             }
             steps {
