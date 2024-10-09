@@ -147,7 +147,8 @@ pipeline {
             steps {
                 script {
                     // Use withCredentials to securely access SSH private key
-                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_PRIVATE_KEY', usernameVariable: 'SSH_USER')]) {
+                    // withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_PRIVATE_KEY', usernameVariable: 'SSH_USER')]) {
+                    withCredentials([file(credentialsId: 'Private-key-file', variable: 'SSH_PRIVATE_KEY_FILE')]) {
                         // Ensure the SSH agent is started
                         // sh 'eval $(ssh-agent -s)'
                         // sh "echo \"${SSH_PRIVATE_KEY}\" | tr -d '\\r' | ssh-add -"
@@ -159,10 +160,10 @@ pipeline {
                         // sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
                         dir('Ansible') {
                             sh '''
-                            echo "$SSH_PRIVATE_KEY"
+                            // echo "$SSH_PRIVATE_KEY"
                             ls
                             
-                            ansible-playbook -i inventory_file playbook.yml --private-key="$SSH_PRIVATE_KEY"
+                            ansible-playbook -i inventory_file playbook.yml --private-key="$SSH_PRIVATE_KEY_FILE"
                             '''
                         }
                         
