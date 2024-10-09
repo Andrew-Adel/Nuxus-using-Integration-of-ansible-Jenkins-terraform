@@ -64,57 +64,70 @@
 #     name: nexus
 #     state: started
 
-- name: Update packages
+---
+# tasks file for ./roles
+- name: Update yum packages
   yum:
-    name: "*"
+    name: '*'
     state: latest
 
-- name: Install Java (required for Nexus)
+- name: Install Java if it does not exist
   yum:
-    name: java
+    name:  java
+    state: present
+- name: Install Java if it does not exist
+  yum:
+    name:  java-11-amazon-corretto-headless.x86_64
     state: present
 
-- name: Create nexus user
-  user:
-    name: nexus
-    shell: /bin/bash
+    
+  
+# - name: Install Java if it does not exist
+#   yum:
+#     name: java-11-openjdk-devel
+#     state: present
 
-- name: Create Nexus directory
-  file:
-    path: "{{ nexus_dir }}"
-    state: directory
 
 - name: Check if Nexus Repository Manager file exists
   stat:
-    path: "{{ nexus_file_path }}"
+    path: /home/ec2-user/nexus-3.72.0-04-unix.tar.gz 
   register: nexus_file
 
 - name: Download Nexus Repository Manager 
   get_url:
-    url: "{{ nexus_url }}"
+    url: https://download.sonatype.com/nexus/3/nexus-3.72.0-04-unix.tar.gz 
     dest: /home/ec2-user
     timeout: 600
   when: not nexus_file.stat.exists
 
-- name: Extract Nexus
-  unarchive:
-    src: "{{ nexus_file_path }}"
-    dest: "{{ nexus_dir }}"
-    remote_src: yes
-  when: nexus_file.stat.exists and (nexus_file.stat.mtime > (ansible_date_time.epoch | int - 86400))
-
-- name: Set ownership of Nexus directory
+- name: Create /opt/nexus directory
   file:
-    path: "{{ nexus_dir }}"
+    path: /opt/nexus
     state: directory
+
+- name: Extract latest-unix.tar.gz into /opt/nexus
+  ansible.builtin.unarchive:
+    src: /home/ec2-user/nexus-3.72.0-04-unix.tar.gz
+    dest: /opt/nexus
+    remote_src: yes
+
+- name: Add the user "nexus" 
+  user:
+    name: nexus
+    shell: /bin/false
+
+- name: Change file ownership
+  file:
+    path: /opt/nexus
+    state: directory
+    recurse: yes
     owner: nexus
     group: nexus
-    recurse: yes
 
 - name: Copy service file 
-  copy:
+  ansible.builtin.copy:
     src: nexus.service
-    dest: "{{ systemd_service_dir }}/nexus.service"
+    dest: /etc/systemd/system/nexus.service
 
 - name: Reload systemd to recognize new services
   systemd:
