@@ -102,6 +102,7 @@ pipeline {
             steps {
                 script {
                     unstash 'terraform-inventory'
+                    sh 'ls'
                     withCredentials([file(credentialsId: 'Private-key-file', variable: 'SSH_PRIVATE_KEY_FILE')]) {
                        dir('Ansible') {
                             sh '''
