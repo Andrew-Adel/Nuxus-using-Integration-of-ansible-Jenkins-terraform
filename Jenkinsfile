@@ -176,7 +176,7 @@ pipeline {
                             # Create a temporary directory for Ansible if it doesn't exist
                             export ANSIBLE_LOCAL_TEMP=${WORKSPACE}/.ansible/tmp
                             mkdir -p "$ANSIBLE_LOCAL_TEMP"
- 
+
                             # Run the Ansible playbook
                             ansible-playbook -i inventory playbook.yml
                             '''
