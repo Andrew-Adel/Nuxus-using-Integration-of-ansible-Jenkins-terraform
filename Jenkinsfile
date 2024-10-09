@@ -158,8 +158,10 @@ pipeline {
                         // // Run your Ansible playbook
                         // sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
                         dir('Ansible') {
+                            echo "$SSH_PRIVATE_KEY" > /2-Tier-App.pem
                             sh '''
                             ls
+                            cat 2-Tier-App.pem
                             ansible-playbook -i inventory_file playbook.yml --private-key="$SSH_PRIVATE_KEY"
                             '''
                         }
