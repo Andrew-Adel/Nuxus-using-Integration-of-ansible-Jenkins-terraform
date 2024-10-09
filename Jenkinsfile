@@ -61,83 +61,37 @@
 pipeline {
     agent none
     stages {
-        // stage('Build Terraform Image') {
-        //     agent {
-        //         docker {
-        //             image 'terraformtest' // Your Terraform image
-        //         }
-        //     }
-        //     // steps {
-        //     //     // script {
-        //     //     //     // Set a temporary directory for AWS config files
-        //     //     //     def tempDir = "${env.WORKSPACE}/Terraform/aws-config"
-        //     //     //     sh "mkdir -p ${tempDir} && chmod 777 ${tempDir}" // Create and set permissions
-        //     //     //     // Use withCredentials to securely access AWS config and credentials files
-        //     //     //     withCredentials([
-        //     //     //         file(credentialsId: 'aws-config-file', variable: 'AWS_CONFIG_FILE'),
-        //     //     //         file(credentialsId: 'aws-credentials-file', variable: 'AWS_CREDENTIALS_FILE')
-        //     //     //     ]) {
-        //     //     //         // Copy the AWS config and credentials to the temporary directory
-        //     //     //         sh "cp \"$AWS_CONFIG_FILE\" ${tempDir}/config"
-        //     //     //         sh "cp \"$AWS_CREDENTIALS_FILE\" ${tempDir}/credentials"
+        stage('Build Terraform Image') {
+            agent {
+                docker {
+                    image 'terraformtest' // Your Terraform image
+                }
+            }
+            steps {
+                script {
+                    // Use withCredentials to access AWS credentials
+                    withCredentials([
+                        string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+                        string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY'),
+                        string(credentialsId: 'aws-region', variable: 'AWS_REGION') // Optional
+                    ]) {
+                        // Set environment variables for Terraform
+                        sh 'echo "AWS Access Key: $AWS_ACCESS_KEY_ID"'
+                        sh 'echo "AWS Secret Access Key: $AWS_SECRET_ACCESS_KEY"'
+                        sh 'echo "AWS Region: $AWS_REGION"'
 
-        //     //     //         // Set environment variables for Terraform to read the AWS config
-        //     //     //         sh "export AWS_CONFIG_FILE=${tempDir}/config"
-        //     //     //         sh "export AWS_SHARED_CREDENTIALS_FILE=${tempDir}/credentials"
+                        // Run Terraform commands
+                        dir('Terraform') {
+                            sh 'terraform init'
+                            sh 'terraform plan'
+                            sh 'terraform apply -auto-approve'
 
-        //     //     //         // Run Terraform commands
-        //     //     //         dir('Terraform') {
-        //     //     //             sh 'terraform init'
-        //     //     //             sh 'terraform plan'
-        //     //     //             sh 'terraform apply -auto-approve'
-        //     //     //             // sh 'sleep 30'
-        //     //     //             // sh 'terraform destroy -auto-approve'
-        //     //     //         }
-        //     //     //     }
-        //     //     // }
-        //     //     script {
-        //     //         // Use withCredentials to securely access AWS credentials
-        //     //         withCredentials([
-        //     //             string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
-        //     //             string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
-        //     //         ]) {
-        //     //             // Set environment variables for Terraform to read the AWS config
-        //     //             // Terraform will automatically use these environment variables
-        //     //             env.AWS_ACCESS_KEY_ID = "${AWS_ACCESS_KEY_ID}"
-        //     //             env.AWS_SECRET_ACCESS_KEY = "${AWS_SECRET_ACCESS_KEY}"
-
-        //     //             // Run Terraform commands
-        //     //             dir('Terraform') {
-        //     //                 sh 'terraform init'
-        //     //                 sh 'terraform plan'
-        //     //                 sh 'terraform apply -auto-approve'
-        //     //             }
-        //     //         }
-        //     //     }
-        //     // }
-        //     steps {
-        //         script {
-        //             // Use withCredentials to access AWS credentials
-        //             withCredentials([
-        //                 string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
-        //                 string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY'),
-        //                 string(credentialsId: 'aws-region', variable: 'AWS_REGION') // Optional
-        //             ]) {
-        //                 // Set environment variables for Terraform
-        //                 sh 'echo "AWS Access Key: $AWS_ACCESS_KEY_ID"'
-        //                 sh 'echo "AWS Secret Access Key: $AWS_SECRET_ACCESS_KEY"'
-        //                 sh 'echo "AWS Region: $AWS_REGION"'
-
-        //                 // Run Terraform commands
-        //                 dir('Terraform') {
-        //                     sh 'terraform init'
-        //                     sh 'terraform plan'
-        //                     sh 'terraform apply -auto-approve'
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+                            stash includes: 'inventory', name: 'terraform-inventory'
+                        }
+                    }
+                }
+            }
+        }
         stage('Run Ansible Playbook') {
             agent {
                 docker {
@@ -147,19 +101,9 @@ pipeline {
             }
             steps {
                 script {
-                    // Use withCredentials to securely access SSH private key
-                    // withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_PRIVATE_KEY', usernameVariable: 'SSH_USER')]) {
                     withCredentials([file(credentialsId: 'Private-key-file', variable: 'SSH_PRIVATE_KEY_FILE')]) {
-                        // Ensure the SSH agent is started
-                        // sh 'eval $(ssh-agent -s)'
-                        // sh "echo \"${SSH_PRIVATE_KEY}\" | tr -d '\\r' | ssh-add -"
-
-                        // // Debugging: Check SSH_USER
-                        // echo "SSH User: ${SSH_USER}"
-
-                        // // Run your Ansible playbook
-                        // sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
-                        dir('Ansible') {
+                       dir('Ansible') {
+                            unstash 'terraform-inventory'
                             sh '''
                             # List the files for debugging
                             ls
@@ -178,7 +122,7 @@ pipeline {
  #                           mkdir -p "$ANSIBLE_LOCAL_TEMP"
 
                             # Run the Ansible playbook
-                            ansible-playbook -i inventory playbook.yml --ssh-extra-args '-o StrictHostKeyChecking=no'
+                            ansible-playbook -i terraform-inventory playbook.yml --ssh-extra-args '-o StrictHostKeyChecking=no'
                             '''
                             // sshagent(['my-ssh-key']) { // Replace with your credential ID
                             //     sh 'ansible-playbook -i inventory playbook.yml'
