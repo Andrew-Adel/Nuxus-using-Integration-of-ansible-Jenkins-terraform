@@ -158,8 +158,7 @@ pipeline {
                         // // Run your Ansible playbook
                         // sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
                         sh '''
-                        eval $(ssh-agent -s) 
-                        echo "$SSH_PRIVATE_KEY" | tr -d '\\r' | ssh-add - 
+
                         ansible-playbook -i inventory_file playbook.yml --private-key="$SSH_PRIVATE_KEY" --user="$SSH_USER"
                         '''
                     }
