@@ -178,7 +178,7 @@ pipeline {
                             mkdir -p "$ANSIBLE_LOCAL_TEMP"
 
                             # Run the Ansible playbook
-                            ansible-playbook -i inventory playbook.yml "
+                            ansible-playbook -i inventory playbook.yml
                             '''
                         }
                         
