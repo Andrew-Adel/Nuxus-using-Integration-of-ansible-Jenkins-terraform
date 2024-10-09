@@ -98,5 +98,25 @@ pipeline {
                 }
             }
         }
+        stage('Run Ansible Playbook') {
+            agent {
+                docker {
+                    image 'ansibletest'
+                }
+            }
+            steps {
+                script {
+                    // Use ssh-agent to load the private key
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyVariable: 'SSH_KEY')]) {
+                        // Set the SSH agent variable
+                        sh 'eval $(ssh-agent -s)'
+                        sh "echo \"$SSH_KEY\" | tr -d '\r' | ssh-add -"
+
+                        // Run your Ansible playbook
+                        sh 'ansible-playbook -i inventory_file playbook.yml --private-key ~/.ssh/id_rsa'
+                    }
+                }
+            }
+        }
     }
 }
