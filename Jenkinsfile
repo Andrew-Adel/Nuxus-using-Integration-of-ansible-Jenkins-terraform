@@ -161,7 +161,9 @@ pipeline {
                         dir('Ansible') {
                             sh '''
                             ls
-                            
+                            eval $(ssh-agent -s)
+                            chmod 600 "$SSH_PRIVATE_KEY_FILE"
+                            ssh-add "$SSH_PRIVATE_KEY_FILE"
                             ansible-playbook -i inventory_file playbook.yml --private-key="$SSH_PRIVATE_KEY_FILE"
                             '''
                         }
