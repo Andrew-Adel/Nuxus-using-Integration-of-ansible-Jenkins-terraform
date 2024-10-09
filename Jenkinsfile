@@ -149,14 +149,19 @@ pipeline {
                     // Use withCredentials to securely access SSH private key
                     withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_PRIVATE_KEY', usernameVariable: 'SSH_USER')]) {
                         // Ensure the SSH agent is started
-                        sh 'eval $(ssh-agent -s)'
-                        sh "echo \"${SSH_PRIVATE_KEY}\" | tr -d '\\r' | ssh-add -"
+                        // sh 'eval $(ssh-agent -s)'
+                        // sh "echo \"${SSH_PRIVATE_KEY}\" | tr -d '\\r' | ssh-add -"
 
-                        // Debugging: Check SSH_USER
-                        echo "SSH User: ${SSH_USER}"
+                        // // Debugging: Check SSH_USER
+                        // echo "SSH User: ${SSH_USER}"
 
-                        // Run your Ansible playbook
-                        sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
+                        // // Run your Ansible playbook
+                        // sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
+                        sh '''
+                        eval $(ssh-agent -s) 
+                        echo "$SSH_PRIVATE_KEY" | tr -d '\\r' | ssh-add - 
+                        ansible-playbook -i inventory_file playbook.yml --private-key="$SSH_PRIVATE_KEY" --user="$SSH_USER"
+                        '''
                     }
                 }
             }
