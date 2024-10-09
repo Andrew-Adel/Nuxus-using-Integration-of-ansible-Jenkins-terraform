@@ -17,7 +17,7 @@ This project demonstrates the automated deployment of Nexus Repository Manager u
 
 ## Architecture Diagram
 
-![Architecture Diagram](link-to-architecture-diagram.png)
+![diagram-export-10-9-2024-9_04_57-PM](https://github.com/user-attachments/assets/61be7f79-77ed-4575-8329-73f67fa8f8cc)
 
 ## Technologies Used
 
