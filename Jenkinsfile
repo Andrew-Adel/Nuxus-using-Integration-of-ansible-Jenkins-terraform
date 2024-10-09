@@ -178,7 +178,7 @@ pipeline {
                             mkdir -p "$ANSIBLE_LOCAL_TEMP"
 
                             # Run the Ansible playbook
-                            ansible-playbook -i inventory playbook.yml
+                            ansible-playbook -i inventory playbook.yml --ssh-extra-args '-o StrictHostKeyChecking=no'
                             '''
                             // sshagent(['my-ssh-key']) { // Replace with your credential ID
                             //     sh 'ansible-playbook -i inventory playbook.yml'
