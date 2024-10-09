@@ -138,6 +138,57 @@ pipeline {
         //         }
         //     }
         // }
+        // stage('Run Ansible Playbook') {
+        //     agent {
+        //         docker {
+        //             image 'ansibletest'
+        //             args '-u root' // Run the container as root (or specify a user with permissions)
+        //         }
+        //     }
+        //     steps {
+        //         script {
+        //             // Use withCredentials to securely access SSH private key
+        //             // withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_PRIVATE_KEY', usernameVariable: 'SSH_USER')]) {
+        //             withCredentials([file(credentialsId: 'Private-key-file', variable: 'SSH_PRIVATE_KEY_FILE')]) {
+        //                 // Ensure the SSH agent is started
+        //                 // sh 'eval $(ssh-agent -s)'
+        //                 // sh "echo \"${SSH_PRIVATE_KEY}\" | tr -d '\\r' | ssh-add -"
+
+        //                 // // Debugging: Check SSH_USER
+        //                 // echo "SSH User: ${SSH_USER}"
+
+        //                 // // Run your Ansible playbook
+        //                 // sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
+        //                 dir('Ansible') {
+        //                     sh '''
+        //                     # List the files for debugging
+        //                     ls
+
+        //                     # Start the SSH agent
+        //                     eval $(ssh-agent -s)
+
+        //                     # Set permissions on the SSH key file
+        //                     chmod 600 "$SSH_PRIVATE_KEY_FILE"
+
+        //                     # Add the private key to the SSH agent
+        //                     ssh-add "$SSH_PRIVATE_KEY_FILE"
+
+        //                     # Create a temporary directory for Ansible if it doesn't exist
+        //                     export ANSIBLE_LOCAL_TEMP=${WORKSPACE}/.ansible/tmp
+        //                     mkdir -p "$ANSIBLE_LOCAL_TEMP"
+
+        //                     # Run the Ansible playbook
+        //                     ansible-playbook -i inventory playbook.yml
+        //                     '''
+        //                     // sshagent(['my-ssh-key']) { // Replace with your credential ID
+        //                     //     sh 'ansible-playbook -i inventory playbook.yml'
+        //                     // }
+        //                 }
+                        
+        //             }
+        //         }
+        //     }
+        // }
         stage('Run Ansible Playbook') {
             agent {
                 docker {
@@ -145,49 +196,41 @@ pipeline {
                     args '-u root' // Run the container as root (or specify a user with permissions)
                 }
             }
+            environment {
+                ANSIBLE_HOST_KEY_CHECKING = 'False' // Disable host key checking
+            }
             steps {
                 script {
-                    // Use withCredentials to securely access SSH private key
-                    // withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_PRIVATE_KEY', usernameVariable: 'SSH_USER')]) {
                     withCredentials([file(credentialsId: 'Private-key-file', variable: 'SSH_PRIVATE_KEY_FILE')]) {
-                        // Ensure the SSH agent is started
-                        // sh 'eval $(ssh-agent -s)'
-                        // sh "echo \"${SSH_PRIVATE_KEY}\" | tr -d '\\r' | ssh-add -"
-
-                        // // Debugging: Check SSH_USER
-                        // echo "SSH User: ${SSH_USER}"
-
-                        // // Run your Ansible playbook
-                        // sh "ansible-playbook -i inventory_file playbook.yml --private-key=${SSH_PRIVATE_KEY}"
                         dir('Ansible') {
                             sh '''
                             # List the files for debugging
                             ls
-
+                            
                             # Start the SSH agent
                             eval $(ssh-agent -s)
-
+                            
                             # Set permissions on the SSH key file
                             chmod 600 "$SSH_PRIVATE_KEY_FILE"
-
+                            
                             # Add the private key to the SSH agent
                             ssh-add "$SSH_PRIVATE_KEY_FILE"
-
+                            
+                            # Optionally, add the target host to known_hosts to avoid warnings
+                            ssh-keyscan -H 3.85.51.1 >> ~/.ssh/known_hosts
+                            
                             # Create a temporary directory for Ansible if it doesn't exist
                             export ANSIBLE_LOCAL_TEMP=${WORKSPACE}/.ansible/tmp
                             mkdir -p "$ANSIBLE_LOCAL_TEMP"
-
+                            
                             # Run the Ansible playbook
                             ansible-playbook -i inventory playbook.yml
                             '''
-                            // sshagent(['my-ssh-key']) { // Replace with your credential ID
-                            //     sh 'ansible-playbook -i inventory playbook.yml'
-                            // }
                         }
-                        
                     }
                 }
             }
         }
+
     }
 }
