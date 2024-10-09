@@ -146,14 +146,15 @@ pipeline {
             }
             steps {
                 script {
-                    // Use ssh-agent to load the private key
-                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyVariable: 'SSH_KEY')]) {
-                        // Set the SSH agent variable
+                    // Use withCredentials to load SSH key without keyVariable
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key')]) {
+                        // Start the SSH agent
                         sh 'eval $(ssh-agent -s)'
-                        sh "echo \"$SSH_KEY\" | tr -d '\r' | ssh-add -"
-
+                        // Add the private key to the SSH agent automatically handled
+                        sh 'ssh-add ~/.ssh/id_rsa' // Default location where the key is stored
+                        
                         // Run your Ansible playbook
-                        sh 'ansible-playbook -i inventory_file playbook.yml --private-key ~/.ssh/id_rsa'
+                        sh 'ansible-playbook -i inventory_file playbook.yml'
                     }
                 }
             }
