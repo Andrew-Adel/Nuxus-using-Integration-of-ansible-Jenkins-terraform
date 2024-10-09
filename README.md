@@ -64,7 +64,7 @@ ansible-playbook playbook.yml
 
 ## Pipeline Visualization
 
-![Pipeline Visualization](link-to-pipeline-visualization.png)
+![image](https://github.com/user-attachments/assets/80d80683-4ef7-4a9b-bb55-3c31b98cb2b9)
 
 
 ## Screenshots
